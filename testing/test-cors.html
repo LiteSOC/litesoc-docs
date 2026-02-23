@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LiteSOC CORS Test</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0a0a0a;
+      color: #e4e4e7;
+      padding: 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    h1 { color: #10b981; margin-bottom: 0.5rem; }
+    .subtitle { color: #71717a; margin-bottom: 2rem; }
+    .card {
+      background: #18181b;
+      border: 1px solid #27272a;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .card h2 { margin-top: 0; color: #fafafa; font-size: 1.1rem; }
+    label { display: block; margin-bottom: 0.5rem; color: #a1a1aa; font-size: 0.875rem; }
+    input, select {
+      width: 100%;
+      padding: 0.75rem;
+      background: #09090b;
+      border: 1px solid #3f3f46;
+      border-radius: 6px;
+      color: #fafafa;
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+    }
+    input:focus, select:focus { outline: none; border-color: #10b981; }
+    button {
+      background: #10b981;
+      color: #000;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+    button:hover { background: #059669; }
+    button:disabled { background: #3f3f46; color: #71717a; cursor: not-allowed; }
+    .result {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 0.8rem;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .result.success { background: #052e16; border: 1px solid #166534; color: #4ade80; }
+    .result.error { background: #450a0a; border: 1px solid #991b1b; color: #f87171; }
+    .result.pending { background: #1c1917; border: 1px solid #44403c; color: #a8a29e; }
+    .info-box {
+      background: #172554;
+      border: 1px solid #1e40af;
+      border-radius: 6px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.875rem;
+    }
+    .info-box code {
+      background: #1e3a8a;
+      padding: 0.125rem 0.375rem;
+      border-radius: 4px;
+      color: #93c5fd;
+    }
+    .current-origin {
+      background: #3f3f46;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-family: monospace;
+      display: inline-block;
+      margin-bottom: 1rem;
+    }
+    .test-scenarios { display: grid; gap: 0.5rem; margin-top: 1rem; }
+    .scenario {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem;
+      background: #27272a;
+      border-radius: 6px;
+      font-size: 0.875rem;
+    }
+    .scenario code { color: #fbbf24; }
+    .badge {
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .badge.blocked { background: #7f1d1d; color: #fca5a5; }
+    .badge.allowed { background: #14532d; color: #86efac; }
+  </style>
+</head>
+<body>
+  <h1>🔒 LiteSOC CORS Test</h1>
+  <p class="subtitle">Test Authorized Origins configuration</p>
+
+  <div class="info-box">
+    <strong>📍 Current Origin:</strong>
+    <div class="current-origin" id="currentOrigin"></div>
+    <p style="margin: 0.5rem 0 0 0;">
+      This is the origin that will be sent in the request. To test different origins, 
+      run a local server with a custom hostname (see instructions below).
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>🧪 Test Configuration</h2>
+    
+    <label for="apiEndpoint">API Endpoint</label>
+    <input type="text" id="apiEndpoint" value="http://localhost:3000/api/v1/collect" placeholder="https://www.litesoc.io/api/v1/collect">
+    
+    <label for="apiKey">API Key</label>
+    <input type="text" id="apiKey" placeholder="lsoc_xxxxxxxxxxxx">
+    
+    <label for="eventType">Event Type</label>
+    <select id="eventType">
+      <option value="login.success">login.success</option>
+      <option value="login.failure">login.failure</option>
+      <option value="user.signup">user.signup</option>
+      <option value="cors.test">cors.test</option>
+    </select>
+    
+    <button onclick="sendTestEvent()" id="sendBtn">Send Test Event</button>
+    
+    <div id="result" class="result pending" style="display: none;"></div>
+  </div>
+
+  <div class="card">
+    <h2>📋 Expected Test Scenarios</h2>
+    <p style="color: #71717a; font-size: 0.875rem; margin-bottom: 1rem;">
+      Add <code style="background: #3f3f46; padding: 0.125rem 0.375rem; border-radius: 4px;">https://*.litesoc.io</code> to your Authorized Origins, then test:
+    </p>
+    <div class="test-scenarios">
+      <div class="scenario">
+        <div><code>https://sub.randomsite.com</code></div>
+        <span class="badge blocked">Should be BLOCKED</span>
+      </div>
+      <div class="scenario">
+        <div><code>https://anything.litesoc.io</code></div>
+        <span class="badge allowed">Should be ALLOWED</span>
+      </div>
+      <div class="scenario">
+        <div><code>https://app.litesoc.io</code></div>
+        <span class="badge allowed">Should be ALLOWED</span>
+      </div>
+      <div class="scenario">
+        <div><code>https://staging.litesoc.io</code></div>
+        <span class="badge allowed">Should be ALLOWED</span>
+      </div>
+      <div class="scenario">
+        <div><code>http://localhost:3000</code></div>
+        <span class="badge allowed">Always ALLOWED (dev)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🛠️ How to Simulate Different Origins</h2>
+    <p style="color: #71717a; font-size: 0.875rem;">
+      To test CORS from different origins, you need to serve this file from different hostnames.
+    </p>
+    
+    <h3 style="font-size: 0.95rem; margin-top: 1.5rem; color: #fafafa;">Step 1: Edit /etc/hosts</h3>
+    <pre style="background: #09090b; padding: 1rem; border-radius: 6px; overflow-x: auto; font-size: 0.8rem;">
+# Add these lines to /etc/hosts (requires sudo)
+127.0.0.1   sub.randomsite.com
+127.0.0.1   anything.litesoc.io
+127.0.0.1   app.litesoc.io
+127.0.0.1   staging.litesoc.io</pre>
+
+    <h3 style="font-size: 0.95rem; margin-top: 1.5rem; color: #fafafa;">Step 2: Start a Simple HTTPS Server</h3>
+    <p style="color: #71717a; font-size: 0.875rem;">
+      For HTTPS testing (required for wildcard matching), use one of these methods:
+    </p>
+    
+    <h4 style="font-size: 0.875rem; color: #a1a1aa; margin-top: 1rem;">Option A: Using Python (HTTP only - for localhost testing)</h4>
+    <pre style="background: #09090b; padding: 1rem; border-radius: 6px; overflow-x: auto; font-size: 0.8rem;">
+# From the lsoc_app directory
+python3 -m http.server 8080
+
+# Then open: http://localhost:8080/test-cors.html</pre>
+
+    <h4 style="font-size: 0.875rem; color: #a1a1aa; margin-top: 1rem;">Option B: Using mkcert + Node.js (HTTPS - for full testing)</h4>
+    <pre style="background: #09090b; padding: 1rem; border-radius: 6px; overflow-x: auto; font-size: 0.8rem;">
+# Install mkcert and create certificates
+brew install mkcert
+mkcert -install
+mkcert "*.litesoc.io" "sub.randomsite.com" localhost
+
+# Install and run a simple HTTPS server
+npx serve -l 8443 --ssl-cert "./_wildcard.litesoc.io+2.pem" --ssl-key "./_wildcard.litesoc.io+2-key.pem"
+
+# Then open:
+# https://anything.litesoc.io:8443/test-cors.html
+# https://sub.randomsite.com:8443/test-cors.html</pre>
+
+    <h4 style="font-size: 0.875rem; color: #a1a1aa; margin-top: 1rem;">Option C: Quick Test with ngrok</h4>
+    <pre style="background: #09090b; padding: 1rem; border-radius: 6px; overflow-x: auto; font-size: 0.8rem;">
+# Start local server
+python3 -m http.server 8080
+
+# In another terminal, expose with ngrok
+ngrok http 8080
+
+# Use the ngrok HTTPS URL and add it to your Authorized Origins</pre>
+  </div>
+
+  <div class="card">
+    <h2>📝 Test Log</h2>
+    <div id="testLog" style="font-family: monospace; font-size: 0.8rem; color: #71717a;">
+      No tests run yet...
+    </div>
+  </div>
+
+  <script>
+    // Display current origin
+    document.getElementById('currentOrigin').textContent = window.location.origin;
+
+    // Log array
+    const logs = [];
+
+    function log(message, type = 'info') {
+      const timestamp = new Date().toLocaleTimeString();
+      const colors = {
+        info: '#a1a1aa',
+        success: '#4ade80',
+        error: '#f87171',
+        warning: '#fbbf24'
+      };
+      logs.unshift({ timestamp, message, type });
+      
+      const logEl = document.getElementById('testLog');
+      logEl.innerHTML = logs.map(l => 
+        `<div style="color: ${colors[l.type]}; margin-bottom: 0.5rem;">
+          <span style="color: #52525b;">[${l.timestamp}]</span> ${l.message}
+        </div>`
+      ).join('');
+    }
+
+    async function sendTestEvent() {
+      const apiEndpoint = document.getElementById('apiEndpoint').value;
+      const apiKey = document.getElementById('apiKey').value;
+      const eventType = document.getElementById('eventType').value;
+      const resultEl = document.getElementById('result');
+      const sendBtn = document.getElementById('sendBtn');
+
+      if (!apiKey) {
+        alert('Please enter your API key');
+        return;
+      }
+
+      // Show loading state
+      sendBtn.disabled = true;
+      sendBtn.textContent = 'Sending...';
+      resultEl.style.display = 'block';
+      resultEl.className = 'result pending';
+      resultEl.textContent = 'Sending request...';
+
+      log(`Sending ${eventType} event from ${window.location.origin}...`);
+
+      const payload = {
+        event: eventType,
+        user_id: 'cors-test-user',
+        email: 'test@example.com',
+        ip_address: '203.0.113.42',
+        metadata: {
+          test: true,
+          origin: window.location.origin,
+          timestamp: new Date().toISOString(),
+          user_agent: navigator.userAgent
+        }
+      };
+
+      try {
+        const response = await fetch(apiEndpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-API-Key': apiKey
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          resultEl.className = 'result success';
+          resultEl.textContent = `✅ SUCCESS (${response.status})\n\nResponse:\n${JSON.stringify(data, null, 2)}`;
+          log(`✅ Request succeeded! Status: ${response.status}`, 'success');
+        } else {
+          resultEl.className = 'result error';
+          resultEl.textContent = `❌ ERROR (${response.status})\n\nResponse:\n${JSON.stringify(data, null, 2)}`;
+          
+          if (response.status === 403 && data.error?.includes('Origin')) {
+            log(`❌ CORS BLOCKED: ${data.error}`, 'error');
+          } else {
+            log(`❌ Request failed: ${data.error || response.statusText}`, 'error');
+          }
+        }
+      } catch (error) {
+        resultEl.className = 'result error';
+        
+        if (error.message.includes('Failed to fetch') || error.name === 'TypeError') {
+          resultEl.textContent = `❌ CORS ERROR\n\nThe browser blocked this request due to CORS policy.\n\nThis means the origin "${window.location.origin}" is NOT in the Authorized Origins list.\n\nCheck your browser's console for more details.`;
+          log(`❌ CORS ERROR: Browser blocked the request`, 'error');
+        } else {
+          resultEl.textContent = `❌ Network Error\n\n${error.message}`;
+          log(`❌ Network error: ${error.message}`, 'error');
+        }
+      } finally {
+        sendBtn.disabled = false;
+        sendBtn.textContent = 'Send Test Event';
+      }
+    }
+
+    // Initialize log
+    log('CORS test page loaded. Current origin: ' + window.location.origin);
+  </script>
+</body>
+</html>

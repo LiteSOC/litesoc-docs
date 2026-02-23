@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LiteSOC Browser Example</title>
+</head>
+<body>
+  <h1>LiteSOC Browser Integration</h1>
+  <p>Open the browser console to see the results.</p>
+
+  <script>
+    // LiteSOC Browser Integration Example
+    // Make sure to add your domain to Authorized Origins in LiteSOC Dashboard
+
+    const LITESOC_API_KEY = 'YOUR_API_KEY_HERE';
+    const LITESOC_ENDPOINT = 'https://www.litesoc.io/api/v1/collect';
+
+    /**
+     * Send a security event to LiteSOC
+     */
+    async function sendEvent(event, data = {}) {
+      try {
+        const response = await fetch(LITESOC_ENDPOINT, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-API-Key': LITESOC_API_KEY
+          },
+          body: JSON.stringify({
+            event,
+            ...data
+          })
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+          console.log('✅ Event sent successfully:', result);
+          return result;
+        } else {
+          console.error('❌ Failed to send event:', result);
+          throw new Error(result.error || 'Failed to send event');
+        }
+      } catch (error) {
+        console.error('❌ Error sending event:', error);
+        throw error;
+      }
+    }
+
+    // Example: Track login success
+    async function trackLoginSuccess(userId, email) {
+      return sendEvent('login.success', {
+        user_id: userId,
+        email: email,
+        metadata: {
+          browser: navigator.userAgent,
+          timestamp: new Date().toISOString()
+        }
+      });
+    }
+
+    // Example: Track login failure
+    async function trackLoginFailure(email, reason) {
+      return sendEvent('login.failure', {
+        email: email,
+        metadata: {
+          reason: reason,
+          browser: navigator.userAgent,
+          timestamp: new Date().toISOString()
+        }
+      });
+    }
+
+    // Example: Track signup
+    async function trackSignup(userId, email) {
+      return sendEvent('user.signup', {
+        user_id: userId,
+        email: email,
+        metadata: {
+          source: document.referrer || 'direct',
+          browser: navigator.userAgent
+        }
+      });
+    }
+
+    // Demo: Send a test event
+    console.log('🔐 LiteSOC Browser Example');
+    console.log('Replace YOUR_API_KEY_HERE with your actual API key');
+    console.log('Then call: trackLoginSuccess("user_123", "user@example.com")');
+  </script>
+</body>
+</html>
