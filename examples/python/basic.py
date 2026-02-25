@@ -9,7 +9,7 @@ import requests
 from typing import Optional, Dict, Any
 
 LITESOC_API_KEY = os.environ.get('LITESOC_API_KEY', 'YOUR_API_KEY_HERE')
-LITESOC_ENDPOINT = 'https://www.litesoc.io/api/v1/collect'
+LITESOC_ENDPOINT = 'https://api.litesoc.io/collect'
 
 
 def send_event(

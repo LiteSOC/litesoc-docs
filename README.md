@@ -16,7 +16,7 @@ Sign up at [litesoc.io](https://lwww.itesoc.io) and get your API key from the da
 ### 2. Send Your First Event
 
 ```bash
-curl -X POST https://www.litesoc.io/api/v1/collect \
+curl -X POST https://api.litesoc.io/collect \
   -H "Content-Type: application/json" \
   -H "X-API-Key: YOUR_API_KEY" \
   -d '{

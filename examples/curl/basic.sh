@@ -3,7 +3,7 @@
 
 # Set your API key
 API_KEY="YOUR_API_KEY_HERE"
-ENDPOINT="https://www.litesoc.io/api/v1/collect"
+ENDPOINT="https://api.litesoc.io/collect"
 
 # ============================================
 # Basic: Login Success

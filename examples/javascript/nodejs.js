@@ -6,7 +6,7 @@
  */
 
 const LITESOC_API_KEY = process.env.LITESOC_API_KEY || 'YOUR_API_KEY_HERE';
-const LITESOC_ENDPOINT = 'https://litesoc.io/api/v1/collect';
+const LITESOC_ENDPOINT = 'https://api.litesoc.io/collect';
 
 /**
  * Send a security event to LiteSOC
