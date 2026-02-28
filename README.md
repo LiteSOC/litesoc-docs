@@ -11,7 +11,7 @@ Official documentation, code examples, and testing tools for [LiteSOC](https://w
 
 ### 1. Get Your API Key
 
-Sign up at [litesoc.io](https://lwww.itesoc.io) and get your API key from the dashboard.
+Sign up at [litesoc.io](https://www.litesoc.io) and get your API key from the dashboard.
 
 ### 2. Send Your First Event
 
@@ -95,7 +95,7 @@ MIT License - see [LICENSE](./LICENSE) for details.
 
 ## 🔗 Links
 
-- [LiteSOC Website](https://lwww.itesoc.io)
+- [LiteSOC Website](https://www.litesoc.io)
 - [Dashboard](https://www.litesoc.io/dashboard)
 - [API Documentation](https://www.litesoc.io/docs/api)
 - [Status Page](https://status.litesoc.io)
