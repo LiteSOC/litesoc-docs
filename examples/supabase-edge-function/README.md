@@ -7,9 +7,32 @@ This Edge Function captures full forensic data (IP address, User-Agent, geolocat
 The standard Supabase integration via Database Webhooks only captures basic user data. This Edge Function enables:
 
 - ✅ **Impossible Travel Detection** - Requires IP address for geolocation
-- ✅ **Behavioral Anomaly Detection** - Requires IP + User-Agent for device fingerprinting
-- ✅ **Brute Force Detection** - Track failed logins with client context
+- ✅ **Geo Anomaly Detection** - Alert on logins from new countries
 - ✅ **VPN/Tor/Proxy Detection** - Network intelligence on every login
+- ✅ **High-Risk Country Alerts** - Flag logins from sanctioned regions
+
+### ⚠️ Brute Force Detection Limitation
+
+Supabase Auth Hooks only fire on **successful** authentication events (`post_session_create`, `post_signup`). They do **not** trigger on failed login attempts.
+
+**To enable Brute Force Detection**, you need to track `auth.login_failed` events using the [LiteSOC SDK](https://litesoc.io/docs/api#sdk) in your client-side or server-side auth error handlers:
+
+```typescript
+// Example: Track failed login in your auth error handler
+import LiteSOC from 'litesoc';
+
+const litesoc = new LiteSOC('lsoc_live_xxx');
+
+// In your login error handler
+catch (error) {
+  if (error.message.includes('Invalid login credentials')) {
+    await litesoc.track('auth.login_failed', {
+      actor: { email: attemptedEmail },
+      metadata: { reason: 'invalid_credentials' }
+    });
+  }
+}
+```
 
 ## Prerequisites
 
