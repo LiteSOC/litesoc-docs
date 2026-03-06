@@ -129,7 +129,7 @@ serve(async (req: Request) => {
 
     // Build the LiteSOC event payload
     const litesocPayload = {
-      event_name: eventName,
+      event: eventName,
       actor: {
         id: user.id,
         email: user.email || undefined,

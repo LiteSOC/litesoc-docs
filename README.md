@@ -61,7 +61,97 @@ Use our [CORS Test Tool](./testing/test-cors.html) to verify your configuration.
 | Pro | 5 | ✅ |
 | Enterprise | Unlimited | ✅ |
 
-## 📁 Examples
+## 🔗 Webhook Integrations
+
+LiteSOC supports receiving events from third-party webhook providers like Supabase and Auth0. **All webhook events get the same enrichment and behavioral AI detection as the `/collect` endpoint.**
+
+### Supported Webhooks
+
+| Provider | Endpoint | Auth Method |
+|----------|----------|-------------|
+| Supabase | `https://api.litesoc.io/webhooks/supabase` | Query param (`?api_key=`) |
+| Auth0 | `https://api.litesoc.io/webhooks/auth0` | Header (`Authorization: Bearer`) |
+
+### Full Feature Parity
+
+Webhook events are processed through our Worker pipeline with **full enrichment**:
+
+| Feature | Free | Pro | Enterprise |
+|---------|------|-----|------------|
+| GeoIP Enrichment | ✅ | ✅ | ✅ |
+| Network Intelligence (VPN/Tor/Proxy) | ✅ | ✅ | ✅ |
+| Brute Force Detection | ✅ | ✅ | ✅ |
+| Impossible Travel Detection | ❌ | ✅ | ✅ |
+| Geo-Anomaly Detection | ❌ | ✅ | ✅ |
+| Custom Threat Models | ❌ | ❌ | ✅ |
+| Email/Slack/Discord Alerts | ❌ | ✅ | ✅ |
+| Webhook Notifications | ❌ | ✅ | ✅ |
+
+### Rate Limiting & Quotas
+
+All webhook endpoints enforce rate limits and monthly quotas based on your plan tier. The limits are **per organization** and apply to batch event submissions.
+
+#### Rate Limits by Plan
+
+| Plan | Requests/Minute | Events/Request |
+|------|-----------------|----------------|
+| Free | 60 | Counted per event |
+| Pro | 300 | Counted per event |
+| Growth | 600 | Counted per event |
+| Enterprise | 1200 | Counted per event |
+
+#### Monthly Event Quotas
+
+| Plan | Monthly Events |
+|------|----------------|
+| Free | 5,000 |
+| Pro | 50,000 |
+| Growth | 500,000 |
+| Enterprise | Unlimited |
+
+### Response Headers
+
+Webhook responses include headers to help monitor your usage:
+
+```
+X-RateLimit-Limit: 60
+X-RateLimit-Remaining: 42
+X-LiteSOC-Quota-Limit: 1000
+X-LiteSOC-Quota-Used: 358
+X-LiteSOC-Plan: free
+```
+
+### Error Responses
+
+| Status | Reason |
+|--------|--------|
+| 401 | Invalid or missing API key |
+| 429 | Rate limit or quota exceeded (check `Retry-After` header) |
+| 400 | Invalid JSON or payload schema |
+| 500 | Server error (contact support) |
+
+### Supabase Integration
+
+Configure a Database Webhook in Supabase to send `auth.users` table changes:
+
+```
+URL: https://api.litesoc.io/webhooks/supabase?api_key=YOUR_API_KEY
+Method: POST
+Table: auth.users
+Events: INSERT, UPDATE, DELETE
+```
+
+### Auth0 Integration
+
+Configure a Log Stream in Auth0 to forward authentication events:
+
+```
+URL: https://api.litesoc.io/webhooks/auth0
+Authorization: Bearer YOUR_API_KEY
+Content-Type: application/json
+```
+
+## �📁 Examples
 
 ### JavaScript/TypeScript
 - [Browser (Vanilla JS)](./examples/javascript/browser.html)
