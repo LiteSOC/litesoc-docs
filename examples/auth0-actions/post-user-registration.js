@@ -35,7 +35,7 @@ exports.onExecutePostUserRegistration = async (event, api) => {
     
     // Build LiteSOC payload
     const payload = {
-      event: "auth.signup_success",
+      event: "auth.login_success",
       actor: {
         id: user.user_id,
         email: user.email || undefined,

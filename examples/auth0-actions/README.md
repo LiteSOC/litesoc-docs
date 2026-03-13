@@ -6,10 +6,10 @@ Ready-to-use Auth0 Actions for integrating LiteSOC security monitoring into your
 
 | Action | Auth0 Trigger | LiteSOC Event | Description |
 |--------|---------------|---------------|-------------|
-| `post-login.js` | Post Login | `auth.login_success` / `auth.signup_success` | Tracks successful logins with full forensic data |
-| `post-user-registration.js` | Post User Registration | `auth.signup_success` | Tracks new user registrations |
-| `post-change-password.js` | Post Change Password | `auth.password_changed` | Tracks password changes |
-| `send-phone-message.js` | Send Phone Message | `auth.mfa_challenge_sent` | Tracks MFA SMS/Voice OTP events |
+| `post-login.js` | Post Login | `auth.login_success` | Tracks successful logins with full forensic data |
+| `post-user-registration.js` | Post User Registration | `auth.login_success` | Tracks new user registrations |
+| `post-change-password.js` | Post Change Password | `auth.password_reset` | Tracks password changes |
+| `send-phone-message.js` | Send Phone Message | `auth.mfa_enabled` | Tracks MFA SMS/Voice OTP events |
 
 ## Features
 
@@ -59,11 +59,11 @@ Copy the contents of the appropriate `.js` file into the Action editor.
 
 | Auth0 Event | LiteSOC Event | Severity |
 |-------------|---------------|----------|
-| First login (logins_count = 1) | `auth.signup_success` | info |
+| First login (logins_count = 1) | `auth.login_success` | info |
 | Subsequent logins | `auth.login_success` | info |
-| New user registration | `auth.signup_success` | info |
-| Password changed | `auth.password_changed` | medium |
-| MFA OTP sent | `auth.mfa_challenge_sent` | info |
+| New user registration | `auth.login_success` | info |
+| Password changed | `auth.password_reset` | medium |
+| MFA OTP sent | `auth.mfa_enabled` | info |
 
 ## Payload Example
 

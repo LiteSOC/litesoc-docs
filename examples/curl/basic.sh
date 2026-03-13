@@ -12,7 +12,7 @@ curl -X POST "$ENDPOINT" \
   -H "Content-Type: application/json" \
   -H "X-API-Key: $API_KEY" \
   -d '{
-    "event": "login.success",
+    "event": "auth.login_success",
     "user_id": "user_123",
     "email": "user@example.com",
     "ip_address": "203.0.113.42"
@@ -27,7 +27,7 @@ curl -X POST "$ENDPOINT" \
   -H "Content-Type: application/json" \
   -H "X-API-Key: $API_KEY" \
   -d '{
-    "event": "login.failure",
+    "event": "auth.login_failed",
     "email": "user@example.com",
     "ip_address": "203.0.113.42",
     "metadata": {
@@ -45,7 +45,7 @@ curl -X POST "$ENDPOINT" \
   -H "Content-Type: application/json" \
   -H "X-API-Key: $API_KEY" \
   -d '{
-    "event": "user.signup",
+    "event": "auth.login_success",
     "user_id": "user_456",
     "email": "newuser@example.com",
     "ip_address": "198.51.100.23"
@@ -60,7 +60,7 @@ curl -X POST "$ENDPOINT" \
   -H "Content-Type: application/json" \
   -H "X-API-Key: $API_KEY" \
   -d '{
-    "event": "password.reset_requested",
+    "event": "auth.password_reset",
     "email": "user@example.com",
     "ip_address": "203.0.113.42"
   }'

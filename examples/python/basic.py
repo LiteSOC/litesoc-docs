@@ -23,7 +23,7 @@ def send_event(
     Send a security event to LiteSOC.
     
     Args:
-        event: Event type (e.g., 'login.success', 'login.failure')
+        event: Event type (e.g., 'auth.login_success', 'auth.login_failed')
         user_id: User identifier
         email: User email address
         ip_address: Client IP address (important for geo-enrichment)
@@ -68,7 +68,7 @@ def send_event(
 def track_login_success(user_id: str, email: str, ip_address: Optional[str] = None):
     """Track a successful login."""
     return send_event(
-        event='login.success',
+        event='auth.login_success',
         user_id=user_id,
         email=email,
         ip_address=ip_address
@@ -78,7 +78,7 @@ def track_login_success(user_id: str, email: str, ip_address: Optional[str] = No
 def track_login_failure(email: str, reason: str, ip_address: Optional[str] = None):
     """Track a failed login attempt."""
     return send_event(
-        event='login.failure',
+        event='auth.login_failed',
         email=email,
         ip_address=ip_address,
         metadata={'reason': reason}
@@ -88,7 +88,7 @@ def track_login_failure(email: str, reason: str, ip_address: Optional[str] = Non
 def track_signup(user_id: str, email: str, ip_address: Optional[str] = None):
     """Track a new user signup."""
     return send_event(
-        event='user.signup',
+        event='auth.login_success',
         user_id=user_id,
         email=email,
         ip_address=ip_address
@@ -98,7 +98,7 @@ def track_signup(user_id: str, email: str, ip_address: Optional[str] = None):
 def track_password_reset(email: str, ip_address: Optional[str] = None):
     """Track a password reset request."""
     return send_event(
-        event='password.reset_requested',
+        event='auth.password_reset',
         email=email,
         ip_address=ip_address
     )

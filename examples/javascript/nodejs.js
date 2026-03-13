@@ -10,7 +10,7 @@ const LITESOC_ENDPOINT = 'https://api.litesoc.io/collect';
 
 /**
  * Send a security event to LiteSOC
- * @param {string} event - Event type (e.g., 'login.success', 'login.failure')
+ * @param {string} event - Event type (e.g., 'auth.login_success', 'auth.login_failed')
  * @param {object} data - Event data
  * @param {string} [ipAddress] - Client IP address (important for geo-enrichment)
  */
@@ -56,7 +56,7 @@ async function sendEvent(event, data = {}, ipAddress = null) {
 
 // Track successful login
 async function trackLoginSuccess(userId, email, ipAddress) {
-  return sendEvent('login.success', {
+  return sendEvent('auth.login_success', {
     user_id: userId,
     email: email,
     metadata: {
@@ -67,7 +67,7 @@ async function trackLoginSuccess(userId, email, ipAddress) {
 
 // Track failed login
 async function trackLoginFailure(email, reason, ipAddress) {
-  return sendEvent('login.failure', {
+  return sendEvent('auth.login_failed', {
     email: email,
     metadata: {
       reason: reason
@@ -77,7 +77,7 @@ async function trackLoginFailure(email, reason, ipAddress) {
 
 // Track user signup
 async function trackSignup(userId, email, ipAddress) {
-  return sendEvent('user.signup', {
+  return sendEvent('auth.login_success', {
     user_id: userId,
     email: email
   }, ipAddress);
@@ -85,7 +85,7 @@ async function trackSignup(userId, email, ipAddress) {
 
 // Track password reset request
 async function trackPasswordReset(email, ipAddress) {
-  return sendEvent('password.reset_requested', {
+  return sendEvent('auth.password_reset', {
     email: email
   }, ipAddress);
 }

@@ -32,7 +32,7 @@ exports.onExecuteSendPhoneMessage = async (event, api) => {
 
   try {
     const payload = {
-      event: "auth.mfa_challenge_sent",
+      event: "auth.mfa_enabled",
       actor: {
         id: event.user?.user_id || "unknown",
         email: event.user?.email || undefined,

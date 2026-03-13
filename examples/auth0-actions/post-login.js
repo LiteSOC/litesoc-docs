@@ -33,7 +33,7 @@ exports.onExecutePostLogin = async (event, api) => {
   try {
     // Determine event type based on login context
     const isFirstLogin = event.stats.logins_count === 1;
-    const eventName = isFirstLogin ? "auth.signup_success" : "auth.login_success";
+    const eventName = "auth.login_success";
     
     // Extract user info
     const user = event.user;

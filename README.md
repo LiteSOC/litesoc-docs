@@ -20,7 +20,7 @@ curl -X POST https://api.litesoc.io/collect \
   -H "Content-Type: application/json" \
   -H "X-API-Key: YOUR_API_KEY" \
   -d '{
-    "event": "login.success",
+    "event": "auth.login_success",
     "user_id": "user_123",
     "email": "user@example.com"
   }'

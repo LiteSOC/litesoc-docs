@@ -82,7 +82,7 @@ supabase functions deploy litesoc-auth-hook
 | Supabase Event | LiteSOC Event | Description |
 |----------------|---------------|-------------|
 | `post_session_create` | `auth.login_success` | User successfully logged in |
-| `post_signup` | `auth.signup_success` | New user registered |
+| `post_signup` | `auth.login_success` | New user registered |
 | `post_password_recovery` | `auth.password_reset` | Password reset requested |
 
 ## Payload Example

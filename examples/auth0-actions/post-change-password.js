@@ -33,7 +33,7 @@ exports.onExecutePostChangePassword = async (event, api) => {
     const request = event.request;
     
     const payload = {
-      event: "auth.password_changed",
+      event: "auth.password_reset",
       actor: {
         id: user.user_id,
         email: user.email || undefined,

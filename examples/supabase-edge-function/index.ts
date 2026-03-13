@@ -121,7 +121,7 @@ serve(async (req: Request) => {
     // Map Supabase event types to LiteSOC event names
     const eventNameMap: Record<string, string> = {
       "post_session_create": "auth.login_success",
-      "post_signup": "auth.signup_success",
+      "post_signup": "auth.login_success",
       "post_password_recovery": "auth.password_reset",
     };
 
