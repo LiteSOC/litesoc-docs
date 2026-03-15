@@ -95,10 +95,7 @@ supabase functions deploy litesoc-auth-hook
     "email": "user@example.com",
     "name": "John Doe"
   },
-  "context": {
-    "ip_address": "203.0.113.42",
-    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)..."
-  },
+  "user_ip": "203.0.113.42",
   "metadata": {
     "source": "supabase_edge_function",
     "supabase_event_type": "post_session_create"

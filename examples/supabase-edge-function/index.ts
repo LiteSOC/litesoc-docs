@@ -135,10 +135,7 @@ serve(async (req: Request) => {
         email: user.email || undefined,
         name: user.user_metadata?.full_name || user.user_metadata?.name || undefined,
       },
-      context: {
-        ip_address: clientIP,
-        user_agent: userAgent,
-      },
+      user_ip: clientIP,
       metadata: {
         source: "supabase_edge_function",
         supabase_event_type: eventType,
