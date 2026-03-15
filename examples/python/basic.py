@@ -16,7 +16,7 @@ def send_event(
     event: str,
     user_id: Optional[str] = None,
     email: Optional[str] = None,
-    ip_address: Optional[str] = None,
+    user_ip: Optional[str] = None,
     metadata: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
     """
@@ -26,7 +26,7 @@ def send_event(
         event: Event type (e.g., 'auth.login_success', 'auth.login_failed')
         user_id: User identifier
         email: User email address
-        ip_address: Client IP address (important for geo-enrichment)
+        user_ip: Client IP address (important for geo-enrichment)
         metadata: Additional event metadata
     
     Returns:
@@ -40,8 +40,8 @@ def send_event(
         payload['user_id'] = user_id
     if email:
         payload['email'] = email
-    if ip_address:
-        payload['ip_address'] = ip_address
+    if user_ip:
+        payload['user_ip'] = user_ip
     if metadata:
         payload['metadata'] = metadata
     
@@ -65,51 +65,67 @@ def send_event(
 # Example Functions
 # ============================================
 
-def track_login_success(user_id: str, email: str, ip_address: Optional[str] = None):
+def track_login_success(actor_id: str, actor_email: str, user_ip: Optional[str] = None):
     """Track a successful login."""
     return send_event(
         event='auth.login_success',
-        user_id=user_id,
-        email=email,
-        ip_address=ip_address
+        actor={
+            'id': actor_id,
+            'email': actor_email
+        },
+        user_ip=user_ip,
+        metadata={'source': 'python-app', 'environment': 'production'}
     )
 
 
-def track_login_failure(email: str, reason: str, ip_address: Optional[str] = None):
+def track_login_failure(actor_id: str, actor_email: str, reason: str, user_ip: Optional[str] = None):
     """Track a failed login attempt."""
     return send_event(
         event='auth.login_failed',
-        email=email,
-        ip_address=ip_address,
+        actor={
+            'id': actor_id,
+            'email': actor_email
+        },
+        user_ip=user_ip,
         metadata={'reason': reason}
     )
 
 
-def track_signup(user_id: str, email: str, ip_address: Optional[str] = None):
+def track_signup(actor_id: str, actor_email: str, user_ip: Optional[str] = None):
     """Track a new user signup."""
     return send_event(
         event='auth.login_success',
-        user_id=user_id,
-        email=email,
-        ip_address=ip_address
+        actor={
+            'id': actor_id,
+            'email': actor_email
+        },
+        user_ip=user_ip,
+        metadata={'source': 'python-app', 'environment': 'production'}
     )
 
 
-def track_password_reset(email: str, ip_address: Optional[str] = None):
+def track_password_reset(actor_id: str, actor_email: str, user_ip: Optional[str] = None):
     """Track a password reset request."""
     return send_event(
         event='auth.password_reset',
-        email=email,
-        ip_address=ip_address
+        actor={
+            'id': actor_id,
+            'email': actor_email
+        },
+        user_ip=user_ip,
+        metadata={'source': 'python-app', 'environment': 'production'}
     )
 
 
-def track_suspicious_activity(user_id: str, reason: str, ip_address: Optional[str] = None):
+def track_suspicious_activity(actor_id: str, actor_email: str, reason: str, user_ip: Optional[str] = None):
     """Track suspicious activity."""
     return send_event(
         event='security.suspicious_activity',
-        user_id=user_id,
-        ip_address=ip_address,
+        actor={
+            'id': actor_id,
+            'email': actor_email
+        },
+        user_ip=user_ip,
         metadata={
             'reason': reason,
             'severity': 'high'
@@ -134,15 +150,15 @@ def get_client_ip():
 def login():
     email = request.json.get('email')
     password = request.json.get('password')
-    ip_address = get_client_ip()
+    user_ip = get_client_ip()
     
     user = authenticate_user(email, password)
     
     if user:
-        track_login_success(user.id, email, ip_address)
+        track_login_success(user.id, email, user_ip)
         return {'success': True}
     else:
-        track_login_failure(email, 'invalid_credentials', ip_address)
+        track_login_failure(email, 'invalid_credentials', user_ip)
         return {'error': 'Invalid credentials'}, 401
 """
 

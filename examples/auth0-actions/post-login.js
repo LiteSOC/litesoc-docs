@@ -80,7 +80,6 @@ exports.onExecutePostLogin = async (event, api) => {
       headers: {
         "Content-Type": "application/json",
         "X-API-Key": apiKey,
-        "User-Agent": "LiteSOC-Auth0-Action/1.0",
       },
       body: JSON.stringify(payload),
       signal: controller.signal,

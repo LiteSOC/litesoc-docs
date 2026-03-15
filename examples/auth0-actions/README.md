@@ -73,24 +73,14 @@ Copy the contents of the appropriate `.js` file into the Action editor.
   "actor": {
     "id": "auth0|507f1f77bcf86cd799439011",
     "email": "user@example.com",
-    "name": "John Doe"
   },
-  "context": {
-    "ip_address": "203.0.113.42",
-    "user_agent": "Mozilla/5.0..."
-  },
+  "user_ip": "203.0.113.42",
   "metadata": {
     "source": "auth0-action",
     "auth0_connection": "Username-Password-Authentication",
     "auth0_client_name": "My App",
     "logins_count": 5,
     "mfa_enrolled": true,
-    "geoip": {
-      "country_code": "US",
-      "city": "San Francisco",
-      "latitude": 37.7749,
-      "longitude": -122.4194
-    }
   }
 }
 ```

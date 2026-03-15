@@ -154,7 +154,6 @@ serve(async (req: Request) => {
       headers: {
         "Content-Type": "application/json",
         "X-API-Key": apiKey,
-        "User-Agent": "LiteSOC-Supabase-EdgeFunction/1.0",
       },
       body: JSON.stringify(litesocPayload),
     });

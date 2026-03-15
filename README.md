@@ -21,8 +21,8 @@ curl -X POST https://api.litesoc.io/collect \
   -H "X-API-Key: YOUR_API_KEY" \
   -d '{
     "event": "auth.login_success",
-    "user_id": "user_123",
-    "email": "user@example.com"
+    "actor": {"user_id": "user_123", "user_email": "abc@local.dev"}
+    "user_ip": "192.168.1.1"
   }'
 ```
 

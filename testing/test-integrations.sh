@@ -36,18 +36,14 @@ echo "1️⃣  Testing basic event ingestion..."
 if [ "$IS_LOCAL" = true ]; then
   RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$API_URL/collect" \
     -H "Content-Type: application/json" \
-    -H "x-api-key: $LITESOC_API_KEY" \
-    -H "x-subdomain: api" \
+    -H "X-API-Key: $LITESOC_API_KEY" \
     -d '{
       "event": "auth.login_success",
       "actor": {
         "id": "test-user-123",
         "email": "test@example.com"
       },
-      "context": {
-        "ip_address": "203.0.113.50",
-        "user_agent": "LiteSOC-Test-Script/1.0"
-      },
+      "user_ip": "203.0.113.50",
       "metadata": {
         "test": true,
         "source": "integration-test"
@@ -56,17 +52,14 @@ if [ "$IS_LOCAL" = true ]; then
 else
   RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$API_URL/collect" \
     -H "Content-Type: application/json" \
-    -H "x-api-key: $LITESOC_API_KEY" \
+    -H "X-API-Key: $LITESOC_API_KEY" \
     -d '{
       "event": "auth.login_success",
       "actor": {
         "id": "test-user-123",
         "email": "test@example.com"
       },
-      "context": {
-        "ip_address": "203.0.113.50",
-        "user_agent": "LiteSOC-Test-Script/1.0"
-      },
+      "user_ip": "203.0.113.50",
       "metadata": {
         "test": true,
         "source": "integration-test"
@@ -90,7 +83,6 @@ echo "2️⃣  Testing Auth0 Log Stream webhook format..."
 if [ "$IS_LOCAL" = true ]; then
   RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$API_URL/webhooks/auth0?api_key=$LITESOC_API_KEY" \
     -H "Content-Type: application/json" \
-    -H "x-subdomain: api" \
     -d '[{
       "log_id": "test-log-123",
       "data": {
@@ -142,7 +134,6 @@ echo "3️⃣  Testing Supabase webhook format..."
 if [ "$IS_LOCAL" = true ]; then
   RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$API_URL/webhooks/supabase?api_key=$LITESOC_API_KEY" \
     -H "Content-Type: application/json" \
-    -H "x-subdomain: api" \
     -d '{
       "type": "INSERT",
       "table": "users",
@@ -188,25 +179,14 @@ echo "4️⃣  Testing event with full forensic data..."
 if [ "$IS_LOCAL" = true ]; then
   RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$API_URL/collect" \
     -H "Content-Type: application/json" \
-    -H "x-api-key: $LITESOC_API_KEY" \
-    -H "x-subdomain: api" \
+    -H "X-API-Key: $LITESOC_API_KEY" \
     -d '{
       "event": "auth.login_success",
       "actor": {
         "id": "forensic-test-user",
         "email": "forensic@example.com",
-        "name": "Forensic Test User"
       },
-      "context": {
-        "ip_address": "185.220.101.1",
-        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        "geo": {
-          "city": "Amsterdam",
-          "country": "NL",
-          "latitude": 52.3676,
-          "longitude": 4.9041
-        }
-      },
+      "user_ip": "185.220.101.1",
       "metadata": {
         "test": true,
         "source": "forensic-test",
@@ -216,24 +196,14 @@ if [ "$IS_LOCAL" = true ]; then
 else
   RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$API_URL/collect" \
     -H "Content-Type: application/json" \
-    -H "x-api-key: $LITESOC_API_KEY" \
+    -H "X-API-Key: $LITESOC_API_KEY" \
     -d '{
       "event": "auth.login_success",
       "actor": {
         "id": "forensic-test-user",
-        "email": "forensic@example.com",
-        "name": "Forensic Test User"
+        "email": "forensic@example.com"
       },
-      "context": {
-        "ip_address": "185.220.101.1",
-        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        "geo": {
-          "city": "Amsterdam",
-          "country": "NL",
-          "latitude": 52.3676,
-          "longitude": 4.9041
-        }
-      },
+      "user_ip": "185.220.101.1",
       "metadata": {
         "test": true,
         "source": "forensic-test",

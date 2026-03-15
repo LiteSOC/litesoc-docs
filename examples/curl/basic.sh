@@ -13,9 +13,14 @@ curl -X POST "$ENDPOINT" \
   -H "X-API-Key: $API_KEY" \
   -d '{
     "event": "auth.login_success",
-    "user_id": "user_123",
-    "email": "user@example.com",
-    "ip_address": "203.0.113.42"
+    "actor": {
+      "id": "user_123",
+      "email": "user@example.com"
+    },
+    "user_ip": "203.0.113.42"
+    "metadata": {
+      "status": "success"
+    }
   }'
 
 echo ""
@@ -28,8 +33,11 @@ curl -X POST "$ENDPOINT" \
   -H "X-API-Key: $API_KEY" \
   -d '{
     "event": "auth.login_failed",
-    "email": "user@example.com",
-    "ip_address": "203.0.113.42",
+    "actor": {
+      "id": "user_123",
+      "email": "test@example.com"
+    },
+    "user_ip": "203.0.113.42",
     "metadata": {
       "reason": "invalid_password",
       "attempts": 3
@@ -46,9 +54,14 @@ curl -X POST "$ENDPOINT" \
   -H "X-API-Key: $API_KEY" \
   -d '{
     "event": "auth.login_success",
-    "user_id": "user_456",
-    "email": "newuser@example.com",
-    "ip_address": "198.51.100.23"
+    "actor": {
+      "id": "user_456",
+      "email": "newuser@example.com"
+    },
+    "user_ip": "198.51.100.23"
+    "metadata": {
+      "status": "success"
+    }
   }'
 
 echo ""
@@ -61,8 +74,14 @@ curl -X POST "$ENDPOINT" \
   -H "X-API-Key: $API_KEY" \
   -d '{
     "event": "auth.password_reset",
-    "email": "user@example.com",
-    "ip_address": "203.0.113.42"
+    "actor": {
+      "id": "user_123",
+      "email": "test@example.com"
+    },
+    "user_ip": "203.0.113.42",
+    "metadata": {
+      "status": "success"
+    }
   }'
 
 echo ""
@@ -75,8 +94,11 @@ curl -X POST "$ENDPOINT" \
   -H "X-API-Key: $API_KEY" \
   -d '{
     "event": "security.suspicious_activity",
-    "user_id": "user_123",
-    "ip_address": "192.0.2.1",
+    "actor": {
+      "id": "user_123",
+      "email": "test@example.com"
+    },
+    "user_ip": "192.0.2.1",
     "metadata": {
       "reason": "multiple_failed_logins",
       "severity": "high",

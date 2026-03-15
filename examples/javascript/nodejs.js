@@ -12,9 +12,9 @@ const LITESOC_ENDPOINT = 'https://api.litesoc.io/collect';
  * Send a security event to LiteSOC
  * @param {string} event - Event type (e.g., 'auth.login_success', 'auth.login_failed')
  * @param {object} data - Event data
- * @param {string} [ipAddress] - Client IP address (important for geo-enrichment)
+ * @param {string} [userIp] - Client IP address (important for geo-enrichment)
  */
-async function sendEvent(event, data = {}, ipAddress = null) {
+async function sendEvent(event, data = {}, userIp = null) {
   try {
     const payload = {
       event,
@@ -22,8 +22,8 @@ async function sendEvent(event, data = {}, ipAddress = null) {
     };
 
     // Include IP address if provided (for server-side tracking)
-    if (ipAddress) {
-      payload.ip_address = ipAddress;
+    if (userIp) {
+      payload.user_ip = userIp;
     }
 
     const response = await fetch(LITESOC_ENDPOINT, {
@@ -55,50 +55,65 @@ async function sendEvent(event, data = {}, ipAddress = null) {
 // ============================================
 
 // Track successful login
-async function trackLoginSuccess(userId, email, ipAddress) {
+async function trackLoginSuccess(actorId, actorEmail,userIp) {
   return sendEvent('auth.login_success', {
-    user_id: userId,
-    email: email,
+    actor: {
+      id: actorId,
+      email: actorEmail
+    },
     metadata: {
       source: 'nodejs-app'
     }
-  }, ipAddress);
+  }, userIp);
 }
 
 // Track failed login
-async function trackLoginFailure(email, reason, ipAddress) {
+async function trackLoginFailure(actorId, actorEmail, reason, userIp) {
   return sendEvent('auth.login_failed', {
-    email: email,
+    actor: {
+      id: actorId,
+      email: actorEmail
+    },
     metadata: {
       reason: reason
     }
-  }, ipAddress);
+  }, userIp);
 }
 
 // Track user signup
-async function trackSignup(userId, email, ipAddress) {
+async function trackSignup(userId, actorId, actorEmail, userIp) {
   return sendEvent('auth.login_success', {
     user_id: userId,
-    email: email
-  }, ipAddress);
+    actor: {
+      id: actorId,
+      email: actorEmail
+    }
+  }, userIp);
 }
 
 // Track password reset request
-async function trackPasswordReset(email, ipAddress) {
+async function trackPasswordReset(actorId, actorEmail, userIp) {
   return sendEvent('auth.password_reset', {
-    email: email
-  }, ipAddress);
+    actor: {
+      id: actorId,
+      email: actorEmail
+    }
+  }, userIp);
 }
 
 // Track suspicious activity
-async function trackSuspiciousActivity(userId, reason, ipAddress) {
+async function trackSuspiciousActivity(userId, actorId, actorEmail, reason, userIp) {
   return sendEvent('security.suspicious_activity', {
     user_id: userId,
+    actor: {
+      id: actorId,
+      email: actorEmail
+    },
     metadata: {
       reason: reason,
       severity: 'high'
     }
-  }, ipAddress);
+  }, userIp);
 }
 
 // ============================================
